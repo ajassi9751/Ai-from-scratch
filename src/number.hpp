@@ -8,6 +8,7 @@
 class number {
 	private:
 		char* storage;
+		char* exponent;
 		void convertDouble(double input);
 		void convertInt(int input);
 	public:
