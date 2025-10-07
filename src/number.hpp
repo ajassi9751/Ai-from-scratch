@@ -7,13 +7,16 @@
 #define NUMBER
 class number {
 	private:
-		char* storage;
-		char* exponent;
+		// Chars happen to be one byte so im using them
+		unsigned char* storage;
+		unsigned char* exponent;
 		void convertDouble(double input);
 		void convertInt(int input);
 	public:
-		number();
+	 	// Constructors
+		number(); // Default constructor
 		number(double input);
 		number(int input);
+		// Operator overloads
 };
 #endif
