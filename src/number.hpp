@@ -19,10 +19,13 @@ class number {
 		number(); // Default constructor
 		number(double input);
 		number(int input);
-		number(number&& movee);
+		number(number&& movee) noexcept;
 		number(const number& copyee);
 		// Operator overloads
+		number& operator= (number&& movee) noexcept;
 		number& operator= (const number& copyee);
+		number& operator= (const int& copyee);
+		number& operator= (const double& copyee);
 		number& operator+ (const number& addee) const;
 		// Methods
 		size_t sizeOfS() const;

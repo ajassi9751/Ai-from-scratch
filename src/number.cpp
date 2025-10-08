@@ -171,6 +171,10 @@ void number::convertDouble(double input) {
 	}
 }
 
+void number::convertInt (int input) {
+	// Simmilar to convertDouble but have to be carefull of integer division
+}
+
 number::~number () {
 	if (storage != nullptr && exponent != nullptr) {
 		free(storage);
@@ -195,7 +199,7 @@ number::number (int input) {
 	//convertInt(input);
 }
 
-number::number (number&& movee) {
+number::number (number&& movee) noexcept {
 	// If its the same object do nothing
 	if (this == &movee) {
 		// Do nothing
@@ -230,6 +234,20 @@ number::number (const number& copyee)  {
 	}
 }
 
+number& number::operator= (number&& movee) noexcept { // Move assignment operator
+	// If its the same object return it
+	if (this == &movee) {
+		return *this;
+	}
+	else {
+		storage = movee.storage;
+		exponent = movee.exponent;
+		movee.storage = nullptr;
+		movee.exponent = nullptr;
+		return *this;
+	}
+}
+
 number& number::operator= (const number& copyee) {
 	// If its the same object just return it
 	if (this == &copyee) {
@@ -253,6 +271,18 @@ number& number::operator= (const number& copyee) {
 			return *this;
 		}
 	}
+}
+
+number& number::operator= (const int& copyee) {
+	// If its the can't be same object
+	convertInt(copyee);
+	return *this;
+}
+
+number& number::operator= (const double& copyee) {
+	// If its the can't be same object
+	convertDouble(copyee);
+	return *this;
 }
 
 number& number::operator+ (const number& addee) const {
