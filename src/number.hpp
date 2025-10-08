@@ -1,6 +1,7 @@
-#ifndef BITSET
-#define BITSET
-#include <bitset>
+#ifndef STDDEF
+#define STDDEF
+// Provides size_t
+#include <cstddef>
 #endif
 
 #ifndef NUMBER
@@ -8,15 +9,25 @@
 class number {
 	private:
 		// Chars happen to be one byte so im using them
-		unsigned char* storage;
-		unsigned char* exponent;
+		unsigned char* storage = nullptr;
+		unsigned char* exponent = nullptr;
 		void convertDouble(double input);
 		void convertInt(int input);
 	public:
 	 	// Constructors
+		~number();
 		number(); // Default constructor
 		number(double input);
 		number(int input);
+		number(number&& movee);
+		number(const number& copyee);
 		// Operator overloads
+		number& operator= (const number& copyee);
+		number& operator+ (const number& addee) const;
+		// Methods
+		size_t sizeOfS() const;
+		size_t sizeOfE() const;
+		const unsigned char* cDataS () const;
+		const unsigned char* cDataE () const;
 };
 #endif

@@ -2,7 +2,9 @@
 #include "number.hpp"
 #endif
 
+// Could instead use malloc.h
 #include <stdlib.h>
+#include <cstring>
 #include <cmath>
 
 void number::convertDouble(double input) {
@@ -76,17 +78,17 @@ void number::convertDouble(double input) {
 		// Might need to change
 		int bits = bytesNeeded*8 - bitsNeeded;
 		int bitsR = 8 - bits;
-		temp << bitsR;
+		temp = temp << bitsR;
 		// Prefaces the sign bit with a 1
 		storage[bytesNeeded-1] &= temp; // This is the "and operator" not the "logical and operator" so it "adds" the bits
 		// Adds the sign bit (1 is positive and 0 is negative)
 		if (((bytesNeeded-1)*8)<(bitsNeeded-1)) {
-			temp >> 1; // Bit shift right so it will be 11 once added
+			temp = temp >> 1; // Bit shift right so it will be 11 once added
 			storage[bytesNeeded-1] &= temp;
 		}
 		else {
-			temp = 0;
-			temp << 7;
+			temp = 1;
+			temp = temp << 7;
 			storage[bytesNeeded-2] &= temp;
 		}
 	}
@@ -95,7 +97,7 @@ void number::convertDouble(double input) {
 		unsigned char temp = 1;
 		int bits = bytesNeeded*8 - bitsNeeded;
 		int bitsR = 8 - bits;
-		temp << bitsR;
+		temp = temp << bitsR;
 		storage[bytesNeeded-1] &= temp;
 		// No need to add a sign bit because it is already zero by default
 	}
@@ -114,7 +116,7 @@ void number::convertDouble(double input) {
 	// Actually do the bianary stuff
 	// TODO: Might be reversed
 	double place = 0;
-	while (true) {
+	while (cleanInput != 0) {
 		if (cleanInput/2 != round(cleanInput/2)) {
 			// Add a one
 			unsigned char temp = 1;
@@ -122,7 +124,7 @@ void number::convertDouble(double input) {
 			int index = round(place/8); // Finds which array to use (not doing +1 because array indexes start at 0)
 			int bitShift = place - index*8;
 			// Do the bitshift
-			temp << bitShift;
+			temp = temp << bitShift;
 			// Add it to the storage
 			storage[index] &= temp;
 			// Note: the integer version may need to be casted to a double
@@ -131,9 +133,6 @@ void number::convertDouble(double input) {
 		else {
 			// Add a zero (do nothing)
 			cleanInput = cleanInput/2;
-		}
-		if (cleanInput == 0) {
-			break;
 		}
 		place++;
 	}
@@ -144,21 +143,133 @@ void number::convertDouble(double input) {
 		unsigned char temp = 1;
 		int bits = bytesNeeded*8 - bitsNeeded;
 		int bitsR = 8 - bits;
-		temp << bitsR;
-		storage[bytesNeeded-1] &= temp;
+		temp = temp << bitsR;
+		exponent[bytesNeeded-1] &= temp;
+	}
+	// Do bianary stuff
+	place = 0;
+	double tempPlace = posPlaces;
+	while (tempPlace != 0) {
+		if (tempPlace/2 != round(tempPlace/2)) {
+			// Add a one
+			unsigned char temp = 1;
+			// Calculate the bitshift
+			int index = round(place/8); // Finds which array to use (not doing +1 because array indexes start at 0)
+			int bitShift = place - index*8;
+			// Do the bitshift
+			temp = temp << bitShift;
+			// Add it to the storage
+			exponent[index] &= temp;
+			// Note: the integer version may need to be casted to a double
+			tempPlace = round(tempPlace/2)-1; // It will get rounded up so -1
+		}
+		else {
+			// Add a zero (do nothing)
+			tempPlace = tempPlace/2;
+		}
+		place++;
 	}
 }
+
+number::~number () {
+	if (storage != nullptr && exponent != nullptr) {
+		free(storage);
+		free(exponent);
+	}
+}
+
 number::number () {
 	storage = (unsigned char*)malloc(sizeof(unsigned char));
 	exponent = (unsigned char*)malloc(sizeof(unsigned char));
 }
+
 number::number (double input) {
 	storage = (unsigned char*)malloc(sizeof(unsigned char));
 	exponent = (unsigned char*)malloc(sizeof(unsigned char));
 	convertDouble(input);
 }
+
 number::number (int input) {
 	storage = (unsigned char*)malloc(sizeof(unsigned char));
 	exponent = (unsigned char*)malloc(sizeof(unsigned char));
 	//convertInt(input);
+}
+
+number::number (number&& movee) {
+	// If its the same object do nothing
+	if (this == &movee) {
+		// Do nothing
+	}
+	else {
+		storage = movee.storage;
+		exponent = movee.exponent;
+		movee.storage = nullptr;
+		movee.exponent = nullptr;
+	}
+}
+
+number::number (const number& copyee)  {
+	// If its the same object do nothing
+	if (this == &copyee) {
+		// Do nothing
+	}
+	else {
+		if (copyee.cDataS() != nullptr && copyee.cDataE() != nullptr) {
+			// Allocate
+			storage = (unsigned char*)malloc(copyee.sizeOfS());
+			exponent = (unsigned char*)malloc(copyee.sizeOfE());
+			// Copy
+			memcpy(storage,copyee.cDataS(),copyee.sizeOfS());	
+			memcpy(storage,copyee.cDataE(),copyee.sizeOfE());	
+		}
+		else {
+			// Replicate the default constructor
+			storage = (unsigned char*)malloc(sizeof(unsigned char));
+			exponent = (unsigned char*)malloc(sizeof(unsigned char));
+		}
+	}
+}
+
+number& number::operator= (const number& copyee) {
+	// If its the same object just return it
+	if (this == &copyee) {
+		return *this;
+	}
+	else {
+		if (copyee.cDataS() != nullptr && copyee.cDataE() != nullptr) {
+			// Allocate
+			storage = (unsigned char*)malloc(copyee.sizeOfS());
+			exponent = (unsigned char*)malloc(copyee.sizeOfE());
+			// Copy
+			memcpy(storage,copyee.cDataS(),copyee.sizeOfS());	
+			memcpy(storage,copyee.cDataE(),copyee.sizeOfE());	
+			// Return for linked statements
+			return *this;
+		}
+		else {
+			// Replicate the default constructor
+			storage = (unsigned char*)malloc(sizeof(unsigned char));
+			exponent = (unsigned char*)malloc(sizeof(unsigned char));
+			return *this;
+		}
+	}
+}
+
+number& number::operator+ (const number& addee) const {
+	// TODO: Do this
+}
+
+size_t number::sizeOfS () const {
+	return sizeof(storage);
+}
+size_t number::sizeOfE () const {
+	return sizeof(exponent);
+}
+
+const unsigned char* number::cDataS () const {
+	return storage;
+}
+
+const unsigned char* number::cDataE () const {
+	return exponent;
 }

@@ -13,7 +13,7 @@ int main () {
 	unsigned char x = c>>5;
 	bool b = x==' ';
 	// 00010001
-	printf("%c%c",c|x);
+	//printf("%c%c",c|x);
 	std::cout << b;
 	return 0;
 }
