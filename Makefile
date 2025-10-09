@@ -1,6 +1,7 @@
 CXXC = /usr/bin/clang++
-CXXFLAGS = -Wall
+CXXFLAGS = -Wall -Werror
 
+#Commands wont show in the console
 .SILENT:
 
 all: linker

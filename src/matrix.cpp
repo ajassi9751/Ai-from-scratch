@@ -53,3 +53,11 @@ matrix& matrix::operator= (matrix&& movee) noexcept {
         return *this;
     }
 }
+
+// matrix& matrix::operator+ (const matrix& addee) const {
+
+// }
+
+// matrix& matrix::operator* (const matrix& multiplee) const {
+
+// }

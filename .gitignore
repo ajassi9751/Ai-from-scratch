@@ -1,0 +1,6 @@
+# Added for makefile
+main
+
+main.o
+matrix.o
+number.o

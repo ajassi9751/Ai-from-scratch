@@ -23,6 +23,7 @@ void number::convertDouble(double input) {
 				i++;
 				tinput /= 10;
 			}
+			posPlaces = i;
 		}
 		else if (input < 0) {
 			int i = 0;
@@ -30,9 +31,11 @@ void number::convertDouble(double input) {
 				i++;
 				tinput *= 10;
 			}
+			posPlaces = i;
 		}
-		// Not sure if this is right TODO: Fix
-		posPlaces = tinput;
+		else {
+			posPlaces = 1; // Maybe change
+		}
 	}
 	// Calculate the bytes for the number
 	unsigned int bitsNeeded;
@@ -108,9 +111,8 @@ void number::convertDouble(double input) {
 	}
 	// Do the mantissa
 	// Make sure the input has no decimals
-	int cleanInput;
+	int cleanInput = input;
 	if (round(input) != input) {
-		int cleanInput = input;
 		while(round(cleanInput) != input) {
 			cleanInput *= 10;	
 		}
@@ -309,9 +311,9 @@ number& number::operator= (const double& copyee) {
 	return *this;
 }
 
-number& number::operator+ (const number& addee) const {
+//number& number::operator+ (const number& addee) const {
 	// TODO: Do this
-}
+//}
 
 size_t number::sizeOfS () const {
 	return sizeof(storage);

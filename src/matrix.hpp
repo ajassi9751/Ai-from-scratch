@@ -18,5 +18,7 @@ class matrix {
         matrix(matrix&& movee); // Move constructor
         matrix& operator= (const matrix& copyee); // Asignment overload
         matrix& operator= (matrix&& movee) noexcept; // Move assignment overload
+        matrix& operator+ (const matrix& addee) const;
+        matrix& operator* (const matrix& multiplee) const;
 };
 #endif
