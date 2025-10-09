@@ -22,10 +22,10 @@ class number {
 		number(number&& movee) noexcept;
 		number(const number& copyee);
 		// Operator overloads
-		number& operator= (number&& movee) noexcept;
-		number& operator= (const number& copyee);
-		number& operator= (const int& copyee);
-		number& operator= (const double& copyee);
+		number& operator= (number&& movee) noexcept; // Move assignment overload
+		number& operator= (const number& copyee); // Copy assignment overload
+		number& operator= (const int& copyee); // Convert from int
+		number& operator= (const double& copyee); // Convert from double
 		number& operator+ (const number& addee) const;
 		// Methods
 		size_t sizeOfS() const;

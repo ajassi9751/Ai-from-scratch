@@ -3,23 +3,53 @@
 #endif
 
 matrix::matrix () {
-    num = new number;
+    storage = new std::vector<std::vector<number>>;
 }
 
 matrix::~matrix () {
-    delete num;
+    delete storage;
 }
 
 matrix::matrix (const matrix& copyee) { // Copy constructor
-    num = new number;
-    //(*num) = copyee.*num; //I need to add an asignment operator to the number class
+    if (this == &copyee) {
+        // Do nothing
+    }
+    else {
+        storage = new std::vector<std::vector<number>>;
+        // Std vector uses its own assignment operator to copy
+        *storage = *copyee.storage;
+    }
 }
 
-matrix::matrix (matrix&& movee) { // Move semantics!
-    num = movee.num; // Steal the pointer
-    movee.~matrix(); // Call the destructor
+matrix::matrix (matrix&& movee) { // Move constructor
+    if (this == &movee) {
+        // Do nothing
+    }
+    else {
+        storage = movee.storage; // Steal the pointer
+        movee.~matrix(); // Call the destructor
+    }
 }
 
 matrix& matrix::operator= (const matrix& copyee) {  // Asignment operator overload
+    if (this == &copyee) {
+        return *this;
+    }
+    else {
+        storage = new std::vector<std::vector<number>>;
+        // Std vector uses its own assignment operator to copy
+        *storage = *copyee.storage;
+        return *this;
+    }
+}
 
+matrix& matrix::operator= (matrix&& movee) noexcept {
+    if (this == &movee) {
+        return *this;
+    }
+    else {
+        storage = movee.storage; // Steal the pointer
+        movee.~matrix(); // Call the destructor
+        return *this;
+    }
 }

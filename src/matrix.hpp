@@ -2,16 +2,21 @@
 #include "number.hpp"
 #endif
 
+#ifndef VECTOR
+#include <vector>
+#endif
+
 #ifndef MATRIX
 #define MATRIX
 class matrix {
 	private:
-        number* num;
+        std::vector<std::vector<number>> *storage = nullptr; // Makes the 2d or matrix
     public:
         matrix();
         ~matrix();
         matrix(const matrix& copyee); // Copy constructor
-        matrix(matrix&& movee);
+        matrix(matrix&& movee); // Move constructor
         matrix& operator= (const matrix& copyee); // Asignment overload
+        matrix& operator= (matrix&& movee) noexcept; // Move assignment overload
 };
 #endif

@@ -59,12 +59,17 @@ void number::convertDouble(double input) {
 		bitsNeededE = (int)(round(log2(input))+1);
 	}
 	bitsNeededE +=1; // The idea is that there will zeros until there is a one which comes before the mantissa
+	// Rename to charsNeeded?
 	unsigned int bytesNeededE = ((double)(bitsNeededE)/8==round((double)(bitsNeededE)/8)) ? bitsNeededE/8 : bitsNeededE/8+1;
 
 	// Allocates the neccecary memmory
-	free(storage);
+	if (storage != nullptr) {
+		free(storage);
+	}
 	storage = (unsigned char*)malloc(sizeof(unsigned char)*bytesNeeded);
-	free(exponent);
+	if (exponent != nullptr) {
+		free(exponent);
+	}
 	exponent = (unsigned char*)malloc(sizeof(unsigned char)*bytesNeededE);
 	// Yes im setting chars to int values because I tested it and it sets it to the bianary value
 	for (int i = 0; i < bytesNeeded; i++) {
@@ -80,16 +85,16 @@ void number::convertDouble(double input) {
 		int bitsR = 8 - bits;
 		temp = temp << bitsR;
 		// Prefaces the sign bit with a 1
-		storage[bytesNeeded-1] &= temp; // This is the "and operator" not the "logical and operator" so it "adds" the bits
+		storage[bytesNeeded-1] |= temp; // This is the "or operator" not the "logical or operator" so it "adds" the bits
 		// Adds the sign bit (1 is positive and 0 is negative)
 		if (((bytesNeeded-1)*8)<(bitsNeeded-1)) {
 			temp = temp >> 1; // Bit shift right so it will be 11 once added
-			storage[bytesNeeded-1] &= temp;
+			storage[bytesNeeded-1] |= temp;
 		}
 		else {
 			temp = 1;
 			temp = temp << 7;
-			storage[bytesNeeded-2] &= temp;
+			storage[bytesNeeded-2] |= temp;
 		}
 	}
 	else {
@@ -98,7 +103,7 @@ void number::convertDouble(double input) {
 		int bits = bytesNeeded*8 - bitsNeeded;
 		int bitsR = 8 - bits;
 		temp = temp << bitsR;
-		storage[bytesNeeded-1] &= temp;
+		storage[bytesNeeded-1] |= temp;
 		// No need to add a sign bit because it is already zero by default
 	}
 	// Do the mantissa
@@ -126,7 +131,7 @@ void number::convertDouble(double input) {
 			// Do the bitshift
 			temp = temp << bitShift;
 			// Add it to the storage
-			storage[index] &= temp;
+			storage[index] |= temp;
 			// Note: the integer version may need to be casted to a double
 			cleanInput = round(cleanInput/2)-1; // It will get rounded up so -1
 		}
@@ -144,7 +149,7 @@ void number::convertDouble(double input) {
 		int bits = bytesNeeded*8 - bitsNeeded;
 		int bitsR = 8 - bits;
 		temp = temp << bitsR;
-		exponent[bytesNeeded-1] &= temp;
+		exponent[bytesNeeded-1] |= temp;
 	}
 	// Do bianary stuff
 	place = 0;
@@ -159,7 +164,7 @@ void number::convertDouble(double input) {
 			// Do the bitshift
 			temp = temp << bitShift;
 			// Add it to the storage
-			exponent[index] &= temp;
+			exponent[index] |= temp;
 			// Note: the integer version may need to be casted to a double
 			tempPlace = round(tempPlace/2)-1; // It will get rounded up so -1
 		}
@@ -173,27 +178,33 @@ void number::convertDouble(double input) {
 
 void number::convertInt (int input) {
 	// Simmilar to convertDouble but have to be carefull of integer division
+	// I can probably just cast the input to a double because they are 64 bits vs 32 bits so it wont overflow
 }
 
 number::~number () {
-	if (storage != nullptr && exponent != nullptr) {
+	if (storage != nullptr) {
 		free(storage);
+	}
+	if (exponent != nullptr) {
 		free(exponent);
 	}
 }
 
 number::number () {
+	// Is the allocation really needed?
 	storage = (unsigned char*)malloc(sizeof(unsigned char));
 	exponent = (unsigned char*)malloc(sizeof(unsigned char));
 }
 
 number::number (double input) {
+	// Is the allocation really needed?
 	storage = (unsigned char*)malloc(sizeof(unsigned char));
 	exponent = (unsigned char*)malloc(sizeof(unsigned char));
 	convertDouble(input);
 }
 
 number::number (int input) {
+	// Is the allocation really needed?
 	storage = (unsigned char*)malloc(sizeof(unsigned char));
 	exponent = (unsigned char*)malloc(sizeof(unsigned char));
 	//convertInt(input);
@@ -205,10 +216,12 @@ number::number (number&& movee) noexcept {
 		// Do nothing
 	}
 	else {
+		// Need to check if movee.storage and exponent are nullptr or maybe not
 		storage = movee.storage;
 		exponent = movee.exponent;
 		movee.storage = nullptr;
 		movee.exponent = nullptr;
+		movee.~number();
 	}
 }
 
@@ -228,6 +241,7 @@ number::number (const number& copyee)  {
 		}
 		else {
 			// Replicate the default constructor
+			// Is the allocation really needed?
 			storage = (unsigned char*)malloc(sizeof(unsigned char));
 			exponent = (unsigned char*)malloc(sizeof(unsigned char));
 		}
@@ -240,10 +254,19 @@ number& number::operator= (number&& movee) noexcept { // Move assignment operato
 		return *this;
 	}
 	else {
+		// Wait how does this work if these are private members
+		if (storage != nullptr) {
+			free(storage);
+		}
+		if (exponent != nullptr) {
+			free(exponent);
+		}
+		// Need to check if movee.storage and exponent are nullptr or maybe not
 		storage = movee.storage;
 		exponent = movee.exponent;
 		movee.storage = nullptr;
 		movee.exponent = nullptr;
+		movee.~number();
 		return *this;
 	}
 }
@@ -266,6 +289,7 @@ number& number::operator= (const number& copyee) {
 		}
 		else {
 			// Replicate the default constructor
+			// Is the allocation really needed?
 			storage = (unsigned char*)malloc(sizeof(unsigned char));
 			exponent = (unsigned char*)malloc(sizeof(unsigned char));
 			return *this;
