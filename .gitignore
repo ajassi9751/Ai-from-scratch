@@ -4,3 +4,4 @@ main
 main.o
 matrix.o
 number.o
+.vscode

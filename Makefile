@@ -26,9 +26,7 @@ number.o: src/number.cpp
 	echo "Builing number.o"
 	$(CXXC) $(CXXFLAGS) -c src/number.cpp
 
-cleanup:
+clean:
 	echo "Cleaning up"
 	rm -f linker *.o
-
-clean: cleanup
 	rm -f main
