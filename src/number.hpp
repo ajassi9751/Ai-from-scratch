@@ -26,11 +26,7 @@ class number {
 		number& operator= (const number& copyee); // Copy assignment overload
 		number& operator= (const int& copyee); // Convert from int
 		number& operator= (const double& copyee); // Convert from double
-		number& operator+ (const number& addee) const;
+		number operator+ (const number& addee) const;
 		// Methods
-		size_t sizeOfS() const;
-		size_t sizeOfE() const;
-		const unsigned char* cDataS () const;
-		const unsigned char* cDataE () const;
 };
 #endif

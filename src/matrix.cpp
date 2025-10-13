@@ -52,10 +52,10 @@ matrix& matrix::operator= (matrix&& movee) noexcept {
 matrix matrix::operator+ (const matrix& addee) const {
     if (getHeight() == addee.getHeight() && getWidth() == addee.getHeight()) {
         std::vector<std::vector<number>>* temp = new std::vector<std::vector<number>>;
-        temp->reserve(getWidth());
+        temp->resize(getWidth());
         // I hope the reference works
         for (std::vector<number>& vec : *temp) {
-            vec.reserve(getHeight());
+            vec.resize(getHeight());
         }
         // Creates a new vector with the result of the added values
         for (int o = 0;o<getWidth();++o) {

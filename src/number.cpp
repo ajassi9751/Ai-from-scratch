@@ -213,43 +213,33 @@ number::number (int input) {
 }
 
 number::number (number&& movee) noexcept {
-	// If its the same object do nothing
-	if (this == &movee) {
-		// Do nothing
-	}
-	else {
-		// Need to check if movee.storage and exponent are nullptr or maybe not
-		storage = movee.storage;
-		exponent = movee.exponent;
-		movee.storage = nullptr;
-		movee.exponent = nullptr;
-		movee.~number();
-	}
+	// Need to check if movee.storage and exponent are nullptr or maybe not
+	// Also its probably not possible to be nullptr
+	storage = movee.storage;
+	exponent = movee.exponent;
+	movee.storage = nullptr;
+	movee.exponent = nullptr;
+	movee.~number();
 }
 
 number::number (const number& copyee)  {
-	// If its the same object do nothing
-	if (this == &copyee) {
-		// Do nothing
+	if (copyee.storage != nullptr && copyee.exponent != nullptr) {
+		// Allocate
+		storage = (unsigned char*)malloc(sizeof(copyee.storage));
+		exponent = (unsigned char*)malloc(sizeof(copyee.exponent));
+		// Copy
+		memcpy(storage,copyee.storage,sizeof(copyee.storage));	
+		memcpy(exponent,copyee.exponent,sizeof(copyee.exponent));	
 	}
 	else {
-		if (copyee.cDataS() != nullptr && copyee.cDataE() != nullptr) {
-			// Allocate
-			storage = (unsigned char*)malloc(copyee.sizeOfS());
-			exponent = (unsigned char*)malloc(copyee.sizeOfE());
-			// Copy
-			memcpy(storage,copyee.cDataS(),copyee.sizeOfS());	
-			memcpy(storage,copyee.cDataE(),copyee.sizeOfE());	
-		}
-		else {
-			// Replicate the default constructor
-			// Is the allocation really needed?
-			storage = (unsigned char*)malloc(sizeof(unsigned char));
-			exponent = (unsigned char*)malloc(sizeof(unsigned char));
-		}
+		// Replicate the default constructor
+		// Is this the correct behavior?
+		storage = (unsigned char*)malloc(sizeof(unsigned char));
+		exponent = (unsigned char*)malloc(sizeof(unsigned char));
 	}
 }
 
+// Should this really be noexcept
 number& number::operator= (number&& movee) noexcept { // Move assignment operator
 	// If its the same object return it
 	if (this == &movee) {
@@ -264,6 +254,7 @@ number& number::operator= (number&& movee) noexcept { // Move assignment operato
 			free(exponent);
 		}
 		// Need to check if movee.storage and exponent are nullptr or maybe not
+		// Also its probably not possible to be nullptr
 		storage = movee.storage;
 		exponent = movee.exponent;
 		movee.storage = nullptr;
@@ -279,19 +270,28 @@ number& number::operator= (const number& copyee) {
 		return *this;
 	}
 	else {
-		if (copyee.cDataS() != nullptr && copyee.cDataE() != nullptr) {
+		// I don't think it is possible for the object to have nullptr's
+		if (copyee.storage != nullptr && copyee.exponent != nullptr) {
+			// Free memory
+			// Couldn't I just not do this?
+			if (storage != nullptr) {
+				free(storage);
+			}
+			if (exponent != nullptr) {
+				free(exponent);
+			}
 			// Allocate
-			storage = (unsigned char*)malloc(copyee.sizeOfS());
-			exponent = (unsigned char*)malloc(copyee.sizeOfE());
+			storage = (unsigned char*)malloc(sizeof(copyee.storage));
+			exponent = (unsigned char*)malloc(sizeof(copyee.exponent));
 			// Copy
-			memcpy(storage,copyee.cDataS(),copyee.sizeOfS());	
-			memcpy(storage,copyee.cDataE(),copyee.sizeOfE());	
+			memcpy(storage,copyee.storage,sizeof(copyee.storage));	
+			memcpy(exponent,copyee.exponent,sizeof(copyee.exponent));	
 			// Return for linked statements
 			return *this;
 		}
 		else {
 			// Replicate the default constructor
-			// Is the allocation really needed?
+			// Is this the correct behavior?
 			storage = (unsigned char*)malloc(sizeof(unsigned char));
 			exponent = (unsigned char*)malloc(sizeof(unsigned char));
 			return *this;
@@ -300,32 +300,15 @@ number& number::operator= (const number& copyee) {
 }
 
 number& number::operator= (const int& copyee) {
-	// If its the can't be same object
 	convertInt(copyee);
 	return *this;
 }
 
 number& number::operator= (const double& copyee) {
-	// If its the can't be same object
 	convertDouble(copyee);
 	return *this;
 }
 
-//number& number::operator+ (const number& addee) const {
+//number number::operator+ (const number& addee) const {
 	// TODO: Do this
 //}
-
-size_t number::sizeOfS () const {
-	return sizeof(storage);
-}
-size_t number::sizeOfE () const {
-	return sizeof(exponent);
-}
-
-const unsigned char* number::cDataS () const {
-	return storage;
-}
-
-const unsigned char* number::cDataE () const {
-	return exponent;
-}
