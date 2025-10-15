@@ -23,7 +23,7 @@ matrix::matrix (const matrix& copyee) { // Copy constructor
 
 matrix::matrix (matrix&& movee) noexcept { // Move constructor
     storage = movee.storage; // Steal the pointer
-    movee.~matrix(); // Call the destructor
+    // movee.~matrix(); // Call the destructor
 }
 
 matrix& matrix::operator= (const matrix& copyee) {  // Asignment operator overload
@@ -44,7 +44,7 @@ matrix& matrix::operator= (matrix&& movee) noexcept {
     }
     else {
         storage = movee.storage; // Steal the pointer
-        movee.~matrix(); // Call the destructor
+        // movee.~matrix(); // Call the destructor
         return *this;
     }
 }
@@ -72,9 +72,21 @@ matrix matrix::operator+ (const matrix& addee) const {
     }
 }
 
-// matrix& matrix::operator* (const matrix& multiplee) const {
-
-// }
+matrix matrix::operator* (const matrix& multiplee) const {
+    if (getWidth() == multiplee.getHeight()) {
+       std::vector<std::vector<number>>* temp;
+       for (int o = 0;o<getHeight();++o) {
+            for (int i = 0;i<getWidth();++i) {
+                // This is wrong
+                temp->at(o).at(i) = storage->at(o).at(i)*multiplee.storage->at(i).at(o);
+            }
+       } 
+    }
+    else {
+        throw std::invalid_argument("Matrix dimensions don't match.");
+    }
+    return *this;
+}
 
 int matrix::getHeight () const {
     // Hopefully the array is garunteed to be initialized by a constructor and doesn't deference a nullptr but I think the vectors methods are safe
