@@ -23,7 +23,7 @@ class matrix {
         // Maybe add a constructor that takes a std::vector<std::vector<number>> as a pointer and uses it
         matrix();
         ~matrix();
-        matrix(std::vector<std::vector<number>>* movee);
+        matrix(std::vector<std::vector<number>>* movee); // Steals a pointer to a vector so classes can be made easily
         matrix(const matrix& copyee); // Copy constructor
         matrix(matrix&& movee) noexcept; // Move constructor
         // Operators

@@ -72,20 +72,35 @@ matrix matrix::operator+ (const matrix& addee) const {
     }
 }
 
+// I think everything here is wrong depending on the way the matrix faces and grows in 2d space
 matrix matrix::operator* (const matrix& multiplee) const {
     if (getWidth() == multiplee.getHeight()) {
-       std::vector<std::vector<number>>* temp;
-       for (int o = 0;o<getHeight();++o) {
-            for (int i = 0;i<getWidth();++i) {
-                // This is wrong
-                temp->at(o).at(i) = storage->at(o).at(i)*multiplee.storage->at(i).at(o);
+        std::vector<std::vector<number>>* temp;
+        temp->resize(getHeight());
+        for (std::vector<number>& vec : *temp) {
+            vec.resize(multiplee.getWidth());
+        }
+        for (int o = 0;o<getHeight();++o) {
+            for (int s = 0;s<multiplee.getWidth();++s) {
+                std::vector<number> rtemp;
+                for (int i = 0;i<getWidth();++i) {
+                    // This is might be wrong
+                    rtemp.push_back(storage->at(o).at(i)*multiplee.storage->at(s).at(i));
+                }
+                number num;
+                // Reference to prevent copying large objects
+                for (number& rnum : rtemp) {
+                    num = num + rnum;
+                }
+                // Definetly wrong
+                temp->at(s).at(o) = num;
             }
-       } 
+       }
+       return matrix(temp);
     }
     else {
         throw std::invalid_argument("Matrix dimensions don't match.");
     }
-    return *this;
 }
 
 int matrix::getHeight () const {
