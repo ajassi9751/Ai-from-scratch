@@ -51,13 +51,15 @@ matrix& matrix::operator= (matrix&& movee) noexcept {
 
 matrix matrix::operator+ (const matrix& addee) const {
     if (getHeight() == addee.getHeight() && getWidth() == addee.getHeight()) {
+        // Creates the vector that will be used to create the class
         std::vector<std::vector<number>>* temp = new std::vector<std::vector<number>>;
+        // Makes sure there is enough space in the vector
         temp->resize(getWidth());
-        // I hope the reference works
         for (std::vector<number>& vec : *temp) {
             vec.resize(getHeight());
         }
         // Creates a new vector with the result of the added values
+        // Iterates through both vectors
         for (int o = 0;o<getWidth();++o) {
             for (int i = 0;i<getHeight();++i) {
                 temp->at(o).at(i) = storage->at(o).at(i) + addee.storage->at(o).at(i);
@@ -75,21 +77,27 @@ matrix matrix::operator+ (const matrix& addee) const {
 // I think everything here is wrong depending on the way the matrix faces and grows in 2d space
 matrix matrix::operator* (const matrix& multiplee) const {
     if (getWidth() == multiplee.getHeight()) {
+        // Creates the vector that will be used to create the class
         std::vector<std::vector<number>>* temp;
+        // Makes sure there is enough space in the vector
         temp->resize(getHeight());
         for (std::vector<number>& vec : *temp) {
             vec.resize(multiplee.getWidth());
         }
+        // Might need to iterate backwards for it to work
+        // Iterates through the hieght of storage
         for (int o = 0;o<getHeight();++o) {
+            // Iterates through the width of the multiplee
             for (int s = 0;s<multiplee.getWidth();++s) {
                 std::vector<number> rtemp;
+                // Iterates through the element
                 for (int i = 0;i<getWidth();++i) {
                     // This is might be wrong
-                    rtemp.push_back(storage->at(o).at(i)*multiplee.storage->at(s).at(i));
+                    rtemp.push_back(storage->at(i).at(o)*multiplee.storage->at(s).at(i));
                 }
                 number num;
                 // Reference to prevent copying large objects
-                for (number& rnum : rtemp) {
+                for (const number& rnum : rtemp) {
                     num = num + rnum;
                 }
                 // Definetly wrong
