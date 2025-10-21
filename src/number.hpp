@@ -6,9 +6,21 @@
 
 #ifndef NUMBER
 #define NUMBER
+
+// Im too lazy to put incude gaurds
+#include <malloc.h> // I dont need the entire stdlib.h
+#include <string.h>
+#include <math.h>
+#include <memory>
+#include <utility>
+#include <iostream>
+
 class number {
 	private:
+		// Could use unique ptr
 		// Chars happen to be one byte so im using them
+		// std::unique_ptr<unsigned char[]> storage;
+		// std::unique_ptr<unsigned char[]> exponent;
 		unsigned char* storage = nullptr;
 		unsigned char* exponent = nullptr;
 		unsigned int stsz = 1;
@@ -32,5 +44,6 @@ class number {
 		number operator+ (const number& addee) const;
 		number operator* (const number& multiplee) const;
 		// Methods
+		void print();
 };
 #endif

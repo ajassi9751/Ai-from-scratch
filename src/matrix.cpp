@@ -78,7 +78,7 @@ matrix matrix::operator+ (const matrix& addee) const {
 matrix matrix::operator* (const matrix& multiplee) const {
     if (getWidth() == multiplee.getHeight()) {
         // Creates the vector that will be used to create the class
-        std::vector<std::vector<number>>* temp;
+        std::vector<std::vector<number>>* temp = nullptr;
         // Makes sure there is enough space in the vector
         temp->resize(getHeight());
         for (std::vector<number>& vec : *temp) {

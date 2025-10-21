@@ -5,5 +5,7 @@
 
 int main () {
 	matrix mat;
+	number num(3.14);
+	num.print();
 	return 0;
 }

@@ -12,10 +12,13 @@
 #include <stdexcept>
 #endif
 
+#include <utility>
+
 #ifndef MATRIX
 #define MATRIX
 class matrix {
 	private:
+        // Could just not use a pointer here and instead use std::move
         std::vector<std::vector<number>> *storage = nullptr; // Makes the 2d or matrix
         // The outer vector is the width, the vertical vector is the height
     public:

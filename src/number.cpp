@@ -2,11 +2,6 @@
 #include "number.hpp"
 #endif
 
-// Could instead use malloc.h
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
-
 void number::convertDouble(double input) {
 	// Determines the if the number is poitive or negative and how many decimal places there are
 	int posPlaces;
@@ -198,9 +193,11 @@ number::number () {
 	// Is the allocation really needed?
 	storage = (unsigned char*)malloc(sizeof(unsigned char));
 	exponent = (unsigned char*)malloc(sizeof(unsigned char));
+	// storage = std::make_unique<unsigned char>;
+	// exponent = std::make_unique<unsigned char>;
 }
 
-// TO construct classes from temporary arrays
+// To construct classes from temporary arrays
 number::number (unsigned char* moveeS, unsigned char* moveeE) {
 	storage = moveeS;
 	exponent = moveeE;
@@ -227,6 +224,8 @@ number::number (number&& movee) noexcept {
 	exponent = movee.exponent;
 	movee.storage = nullptr;
 	movee.exponent = nullptr;
+	//storage = std::move(movee.storage)
+	//exponent = std::move(movee.exponent)
 	//movee.~number();
 }
 
@@ -267,6 +266,8 @@ number& number::operator= (number&& movee) noexcept { // Move assignment operato
 		exponent = movee.exponent;
 		movee.storage = nullptr;
 		movee.exponent = nullptr;
+		//storage = std::move(movee.storage)
+		//exponent = std::move(movee.exponent)
 		// movee.~number();
 		return *this;
 	}
@@ -395,7 +396,8 @@ number number::operator+ (const number& addee) const {
 	// TODO: The issue is with negative
 	// Iterate through the array
 	// TODO: The other isssue is that this doesn't take into account the sign bit or the bit that marks the end
-	int masterIt = 0; // Counts the amount of bits iterated through
+	// Used for later
+	// int masterIt = 0; // Counts the amount of bits iterated through
 	for (int o = 0;o<st/sizeof(unsigned char);++o) {
 		// Iterate through the bits
 		for (int i = 0;i<8;++i) {
@@ -448,4 +450,30 @@ number number::operator+ (const number& addee) const {
 number number::operator* (const number& multiplee) const {
 	// Do stuff
 	return *this;
+}
+
+void number::print() {
+	std::cout << "Storage:\n";
+	for (int i = 0;i<stsz;++i) {
+		// Could be wrong
+		for (int o = 8;o>0;--o) {
+			if (((storage[i]>>o)&1)==1) {
+				std::cout << "1\n";
+			}
+			else {
+				std::cout << "0\n";
+			}
+		}	
+	}
+	std::cout << "Exponent:\n";
+	for (int i = 0;i<exsz;++i) {
+		for (int o = 8;o>0;--o) {
+			if (((exponent[i]>>o)&1)==1) {
+				std::cout << "1\n";
+			}
+			else {
+				std::cout << "0\n";
+			}
+		}	
+	}
 }
