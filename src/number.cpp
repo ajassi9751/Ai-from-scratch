@@ -1,9 +1,7 @@
-#ifndef NUMBER
 #include "number.hpp"
-#endif
 
 void number::convertDouble(double input) {
-	// Determines the if the number is poitive or negative and how many decimal places there are
+	// Determines the if the number is positive or negative and how many decimal places there are
 	int posPlaces;
 	bool isPositive = true;
 	{

@@ -1,29 +1,30 @@
-#ifndef MATRIX
 #include "matrix.hpp"
-#endif
 
 matrix::matrix () {
-    storage = new std::vector<std::vector<number>>;
+    // storage = new std::vector<std::vector<number>>;
 }
 
 matrix::~matrix () {
-    delete storage;
+    // delete storage;
 }
 
+// Takes an r value reference to a vector that it steals using std::move (better than using raw pointers)
 // Needed for operatons that have to return a new matrix
-matrix::matrix(std::vector<std::vector<number>>* movee) {
-    storage = movee;
+matrix::matrix(std::vector<std::vector<number>>&& movee) {
+    storage = std::move(movee);
 }
 
 matrix::matrix (const matrix& copyee) { // Copy constructor
-    storage = new std::vector<std::vector<number>>;
+    // storage = new std::vector<std::vector<number>>;
     // Std vector uses its own assignment operator to copy
-    *storage = *copyee.storage;
+    // *storage = *copyee.storage;
+    storage = copyee.storage;
 }
 
 matrix::matrix (matrix&& movee) noexcept { // Move constructor
-    storage = movee.storage; // Steal the pointer
+    // storage = movee.storage; // Steal the pointer
     // movee.~matrix(); // Call the destructor
+    storage = std::move(movee.storage);
 }
 
 matrix& matrix::operator= (const matrix& copyee) {  // Asignment operator overload
@@ -31,9 +32,10 @@ matrix& matrix::operator= (const matrix& copyee) {  // Asignment operator overlo
         return *this;
     }
     else {
-        storage = new std::vector<std::vector<number>>;
+        // storage = new std::vector<std::vector<number>>;
         // Std vector uses its own assignment operator to copy
-        *storage = *copyee.storage;
+        // *storage = *copyee.storage;
+    	storage = copyee.storage; // Steal the pointer
         return *this;
     }
 }
@@ -52,20 +54,24 @@ matrix& matrix::operator= (matrix&& movee) noexcept {
 matrix matrix::operator+ (const matrix& addee) const {
     if (getHeight() == addee.getHeight() && getWidth() == addee.getHeight()) {
         // Creates the vector that will be used to create the class
-        std::vector<std::vector<number>>* temp = new std::vector<std::vector<number>>;
+        // std::vector<std::vector<number>>* temp = new std::vector<std::vector<number>>;
+        std::vector<std::vector<number>> temp;
         // Makes sure there is enough space in the vector
-        temp->resize(getWidth());
-        for (std::vector<number>& vec : *temp) {
+        // temp->resize(getWidth());
+        temp.resize(getWidth());
+        for (std::vector<number>& vec : temp) {
             vec.resize(getHeight());
         }
         // Creates a new vector with the result of the added values
         // Iterates through both vectors
         for (int o = 0;o<getWidth();++o) {
             for (int i = 0;i<getHeight();++i) {
-                temp->at(o).at(i) = storage->at(o).at(i) + addee.storage->at(o).at(i);
+                // temp->at(o).at(i) = storage->at(o).at(i) + addee.storage->at(o).at(i);
+                temp.at(o).at(i) = storage.at(o).at(i) + addee.storage.at(o).at(i);
             }
         }
-        return matrix(temp);
+        // return matrix(temp);
+        return matrix(std::move(temp));
     }
     else {
         // Make sure to handle accordingly
@@ -78,10 +84,12 @@ matrix matrix::operator+ (const matrix& addee) const {
 matrix matrix::operator* (const matrix& multiplee) const {
     if (getWidth() == multiplee.getHeight()) {
         // Creates the vector that will be used to create the class
-        std::vector<std::vector<number>>* temp = nullptr;
+        // std::vector<std::vector<number>>* temp = new std::vector<std::vector<number>>;
+        std::vector<std::vector<number>> temp;
         // Makes sure there is enough space in the vector
-        temp->resize(getHeight());
-        for (std::vector<number>& vec : *temp) {
+        // temp->resize(getHeight());
+        temp.resize(getHeight());
+        for (std::vector<number>& vec : temp) {
             vec.resize(multiplee.getWidth());
         }
         // Might need to iterate backwards for it to work
@@ -93,7 +101,8 @@ matrix matrix::operator* (const matrix& multiplee) const {
                 // Iterates through the element
                 for (int i = 0;i<getWidth();++i) {
                     // This is might be wrong
-                    rtemp.push_back(storage->at(i).at(o)*multiplee.storage->at(s).at(i));
+                    // rtemp.push_back(storage->at(i).at(o)*multiplee.storage->at(s).at(i));
+                    rtemp.push_back(storage.at(i).at(o)*multiplee.storage.at(s).at(i));
                 }
                 number num;
                 // Reference to prevent copying large objects
@@ -101,10 +110,12 @@ matrix matrix::operator* (const matrix& multiplee) const {
                     num = num + rnum;
                 }
                 // Definetly wrong
-                temp->at(s).at(o) = num;
+                // temp->at(s).at(o) = num;
+                temp.at(s).at(o) = num;
             }
        }
-       return matrix(temp);
+       // return matrix(temp);
+       return matrix(std::move(temp));
     }
     else {
         throw std::invalid_argument("Matrix dimensions don't match.");
@@ -113,9 +124,11 @@ matrix matrix::operator* (const matrix& multiplee) const {
 
 int matrix::getHeight () const {
     // Hopefully the array is garunteed to be initialized by a constructor and doesn't deference a nullptr but I think the vectors methods are safe
-    return storage->size();
+    // return storage->size();
+    return storage.size();
 }
 
 int matrix::getWidth () const {
-    return storage->front().size();
+    // return storage->front().size();
+    return storage.front().size();
 }

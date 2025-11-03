@@ -19,14 +19,14 @@
 class matrix {
 	private:
         // Could just not use a pointer here and instead use std::move
-        std::vector<std::vector<number>> *storage = nullptr; // Makes the 2d or matrix
+        std::vector<std::vector<number>> storage; // Makes the 2d or matrix
         // The outer vector is the width, the vertical vector is the height
     public:
         // Constructors
         // Maybe add a constructor that takes a std::vector<std::vector<number>> as a pointer and uses it
         matrix();
         ~matrix();
-        matrix(std::vector<std::vector<number>>* movee); // Steals a pointer to a vector so classes can be made easily
+        matrix(std::vector<std::vector<number>>&& movee); // Steals a pointer to a vector so classes can be made easily
         matrix(const matrix& copyee); // Copy constructor
         matrix(matrix&& movee) noexcept; // Move constructor
         // Operators
