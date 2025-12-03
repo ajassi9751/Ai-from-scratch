@@ -1,21 +1,11 @@
-#ifndef NUMBER
-#include "number.hpp"
-#endif
-
-#ifndef VECTOR
-#define VECTOR
-#include <vector>
-#endif
-
-#ifndef EXCEPT
-#define EXCEPT
-#include <stdexcept>
-#endif
-
-#include <utility>
-
 #ifndef MATRIX
 #define MATRIX
+
+#include "number.hpp"
+#include <vector>
+#include <stdexcept>
+#include <utility>
+
 class matrix {
 	private:
         // Could just not use a pointer here and instead use std::move

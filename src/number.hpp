@@ -1,13 +1,8 @@
-#ifndef STDDEF
-#define STDDEF
-// Provides size_t
-#include <cstddef>
-#endif
-
 #ifndef NUMBER
 #define NUMBER
 
 // Im too lazy to put incude gaurds
+#include <cstddef> // Provides size_t
 #include <malloc.h> // I dont need the entire stdlib.h
 #include <string.h>
 #include <math.h>

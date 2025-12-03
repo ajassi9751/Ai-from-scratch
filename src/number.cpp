@@ -173,9 +173,9 @@ void number::convertDouble(double input) {
 	}
 }
 
+// This function is kinda useless
 void number::convertInt (int input) {
-	// Simmilar to convertDouble but have to be carefull of integer division
-	// I can probably just cast the input to a double because they are 64 bits vs 32 bits so it wont overflow
+	convertDouble(static_cast<double>(input));
 }
 
 number::~number () {
