@@ -4,4 +4,4 @@ project(aifs)
 set(CMAKE_C_COMPILER="/usr/bin/clang")
 set(CMAKE_CXX_COMPILER="/usr/bin/clang++")
 
-add_executable(main src/main.cpp src/number.cpp src/matrix.cpp)
+add_executable(main src/main.cpp src/number.cpp src/intmatrix.cpp)
