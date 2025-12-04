@@ -3,7 +3,6 @@
 #include "intmatrix.hpp"
 #include <vector>
 #include <utility>
-#include <stdio.h>
 #include <iostream>
 
 int main () {
